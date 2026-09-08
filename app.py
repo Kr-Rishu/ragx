@@ -9,7 +9,7 @@ from rag_pipeline.reports_store import SharedReportStore
 import io
 import zipfile
 
-from rag_pipeline import DocSegmenter
+from rag_pipeline.segmenter.doc_segmenter import DocSegmenter
 
 st.set_page_config(page_title='RAG Assistant', layout='wide')
 
