@@ -1,0 +1,22 @@
+# Ignore Python virtual environment folder
+.venv/
+
+# Ignore Python compiled bytecode/cache folders recursively
+**/__pycache__/
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+*.env
+
+pass.txt
+__pycache__/
+*.sqlite*
+*.ipynb
+*.faiss
+*.pdf
+*.tvim
