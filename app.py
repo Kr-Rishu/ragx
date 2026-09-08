@@ -2,7 +2,8 @@ import tempfile
 from pathlib import Path
 import pandas as pd
 import streamlit as st
-from rag_pipeline import RAGPipeline, EvalConfig
+from rag_pipeline.pipeline import RAGPipeline
+from rag_pipeline.models import EvalConfig
 from rag_pipeline.evaluation import render_markdown, render_pdf
 from rag_pipeline.reports_store import SharedReportStore
 import io
