@@ -13,3 +13,4 @@ boto3
 turbovec
 openpyxl
 reportlab
+docling
