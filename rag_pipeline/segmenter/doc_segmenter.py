@@ -312,31 +312,11 @@ class DocSegmenter(Tokenizer):
         chunk.high_level_summary = getattr(response, 'high_level_summary', None)
         chunk.keywords = []
         return chunk
-    
-    # def generate_chunks(self, document_path = None, *, document: Document = None, file_bytes = None, file_name = None):
 
-    #     if document is None:
-    #         with Timer('Extracting document content'):
-    #             # document = self.extract_content(file_bytes=file_bytes, file_name=file_name)
-    #             document = self.extract_content(filepath=document_path)
-    #     with Timer("Chunking document"):
-    #         text_chunks, text_tokens, text_topics = self._title_based_chunking(document.source)
-    #         assert len(text_chunks) == len(text_tokens) == len(text_topics)        
-    #         chunk_list = self._adjust_token_size(text_chunks, text_tokens, text_topics)
-    #         document.chunks = chunk_list
-    #     # with Timer("Generating chunk's entities"):
-    #     #     document.chunks = list(map(self._update_chunk_entities, chunk_list))
-        
-    #     return document
-    def generate_chunks(self, document_path=None, *, document: Document = None,
-        file_bytes=None, file_name=None):
+    def generate_chunks(self, document_path=None, *, document: Document = None, file_bytes=None, file_name=None):
 
         if document is None:
             with Timer('Extracting document content'):
-                # document = self.extract_content(
-                #     file_bytes=file_bytes,
-                #     file_name=file_name
-                # )
                 document = self.extract_content(filepath=document_path)
 
         if document is None:
