@@ -93,9 +93,9 @@ class DocSegmenter(Tokenizer):
             
         # except Exception:
         #     print(f'Error occured while extracting content : \n{traceback.format_exc()}')
-        except Exception:
-            logger.exception("Error occurred while extracting content")
-            raise
+        except Exception as e:
+            logger.exception(f'Error occurred while extracting content from {filepath}')
+            raise RuntimeError(f'Failed to extract content from {filepath}: {e}') from e
 
     def _title_based_chunking(self, markdown : str) -> tuple[list, list, list]:
         matches = list(DocSegmenter.HEADING_PATTERN.finditer(markdown))
