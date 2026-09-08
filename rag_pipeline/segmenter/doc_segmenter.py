@@ -316,6 +316,9 @@ class DocSegmenter(Tokenizer):
             with Timer('Extracting document content'):
                 # document = self.extract_content(file_bytes=file_bytes, file_name=file_name)
                 document = self.extract_content(filepath=document_path)
+        if document is None:
+            print(document)
+            return None
         with Timer("Chunking document"):
             text_chunks, text_tokens, text_topics = self._title_based_chunking(document.source)
             assert len(text_chunks) == len(text_tokens) == len(text_topics)        
