@@ -92,7 +92,8 @@ class DocSegmenter(Tokenizer):
                 raise FileNotFoundError(f"{fp} path doesn't exist ! Please provide a valid document path to extract.")    
             
         except Exception:
-            print(f'Error occured while extracting content : \n{traceback.format_exc()}')
+            logger.exception("DOCUMENT EXTRACTION FAILED")
+            raise
 
     def _title_based_chunking(self, markdown : str) -> tuple[list, list, list]:
         matches = list(DocSegmenter.HEADING_PATTERN.finditer(markdown))
