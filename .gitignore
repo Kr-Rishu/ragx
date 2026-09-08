@@ -4,6 +4,12 @@
 # Ignore Python compiled bytecode/cache folders recursively
 **/__pycache__/
 
+# Local environment variables
+.env
+
+# Streamlit local secrets (if you decide to use them later)
+.streamlit/secrets.toml
+
 # Large media files
 *.mp4
 *.tiff
