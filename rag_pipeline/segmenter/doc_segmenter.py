@@ -61,23 +61,7 @@ class DocSegmenter(Tokenizer):
             _parser = DocumentConverter(format_options={
                             InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options),
                             InputFormat.DOCX: WordFormatOption() # Uses SimplePipeline by default
-                        })       
-            
-            if file_bytes is not None:
-                return Document(
-                    id=generate_sha256_hash(file_bytes),
-                    name=file_name,
-                    page_count=1,
-                    source=file_bytes,
-                )
-            
-            # if file_bytes is not None:
-            #     if not file_name:
-            #         raise ValueError('file_name is required when passing file_bytes')
-            #     source = DocumentStream(name=file_name, stream=BytesIO(file_bytes))
-            #     parsed_doc: DoclingDocument = _parser.convert(source).document
-            #     md = parsed_doc.export_to_markdown()
-            #     return Document(id=generate_sha256_hash(md), name=file_name, page_count=parsed_doc.num_pages(), source=md)
+                        })
 
             fp = Path(filepath)
             if fp.exists():
@@ -90,9 +74,6 @@ class DocSegmenter(Tokenizer):
                 
             else:
                 raise FileNotFoundError(f"{fp} path doesn't exist ! Please provide a valid document path to extract.")    
-            
-        # except Exception:
-        #     print(f'Error occured while extracting content : \n{traceback.format_exc()}')
         except Exception as e:
             logger.exception(f'Error occurred while extracting content from {filepath}')
             raise RuntimeError(f'Failed to extract content from {filepath}: {e}') from e
@@ -313,35 +294,17 @@ class DocSegmenter(Tokenizer):
         chunk.keywords = []
         return chunk
 
-    def generate_chunks(self, document_path=None, *, document: Document = None, file_bytes=None, file_name=None):
+   def generate_chunks(self, document_path = None, *, document: Document = None, file_bytes = None, file_name = None):
 
         if document is None:
             with Timer('Extracting document content'):
                 document = self.extract_content(filepath=document_path)
-
-        if document is None:
-            raise RuntimeError(
-                f"Document extraction failed for: {document_path}"
-            )
-
-        if not document.source:
-            raise RuntimeError(
-                f"Document extraction returned empty source for: {document_path}"
-            )
-
         with Timer("Chunking document"):
-            text_chunks, text_tokens, text_topics = self._title_based_chunking(
-                document.source
-            )
-
-        assert len(text_chunks) == len(text_tokens) == len(text_topics)
-
-        chunk_list = self._adjust_token_size(
-            text_chunks,
-            text_tokens,
-            text_topics
-        )
-
-        document.chunks = chunk_list
-
+            text_chunks, text_tokens, text_topics = self._title_based_chunking(document.source)
+            assert len(text_chunks) == len(text_tokens) == len(text_topics)        
+            chunk_list = self._adjust_token_size(text_chunks, text_tokens, text_topics)
+            document.chunks = chunk_list
+        # with Timer("Generating chunk's entities"):
+        #     document.chunks = list(map(self._update_chunk_entities, chunk_list))
+        
         return document
