@@ -61,7 +61,23 @@ class DocSegmenter(Tokenizer):
             _parser = DocumentConverter(format_options={
                             InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options),
                             InputFormat.DOCX: WordFormatOption() # Uses SimplePipeline by default
-                        })
+                        })       
+            
+            if file_bytes is not None:
+                return Document(
+                    id=generate_sha256_hash(file_bytes),
+                    name=file_name,
+                    page_count=1,
+                    source=file_bytes,
+                )
+            
+            # if file_bytes is not None:
+            #     if not file_name:
+            #         raise ValueError('file_name is required when passing file_bytes')
+            #     source = DocumentStream(name=file_name, stream=BytesIO(file_bytes))
+            #     parsed_doc: DoclingDocument = _parser.convert(source).document
+            #     md = parsed_doc.export_to_markdown()
+            #     return Document(id=generate_sha256_hash(md), name=file_name, page_count=parsed_doc.num_pages(), source=md)
 
             fp = Path(filepath)
             if fp.exists():
@@ -74,9 +90,9 @@ class DocSegmenter(Tokenizer):
                 
             else:
                 raise FileNotFoundError(f"{fp} path doesn't exist ! Please provide a valid document path to extract.")    
-        except Exception as e:
-            logger.exception(f'Error occurred while extracting content from {filepath}')
-            raise RuntimeError(f'Failed to extract content from {filepath}: {e}') from e
+            
+        except Exception:
+            print(f'Error occured while extracting content : \n{traceback.format_exc()}')
 
     def _title_based_chunking(self, markdown : str) -> tuple[list, list, list]:
         matches = list(DocSegmenter.HEADING_PATTERN.finditer(markdown))
@@ -293,11 +309,12 @@ class DocSegmenter(Tokenizer):
         chunk.high_level_summary = getattr(response, 'high_level_summary', None)
         chunk.keywords = []
         return chunk
-
-   def generate_chunks(self, document_path = None, *, document: Document = None, file_bytes = None, file_name = None):
+    
+    def generate_chunks(self, document_path = None, *, document: Document = None, file_bytes = None, file_name = None):
 
         if document is None:
             with Timer('Extracting document content'):
+                # document = self.extract_content(file_bytes=file_bytes, file_name=file_name)
                 document = self.extract_content(filepath=document_path)
         with Timer("Chunking document"):
             text_chunks, text_tokens, text_topics = self._title_based_chunking(document.source)
