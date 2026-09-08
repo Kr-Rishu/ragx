@@ -1,0 +1,15 @@
+streamlit
+pandas
+numpy
+sentence-transformers
+rank_bm25
+langchain-openai
+langchain-core
+langchain-community
+pydantic
+python-dotenv
+deepeval
+boto3
+turbovec
+openpyxl
+reportlab
